@@ -40,10 +40,11 @@ import { Textarea } from "@/components/ui/textarea"
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-export function Dashboard() {
+export default function Dashboard() {
   return (
     <div className="grid h-screen w-full pl-[56px]">
       <aside className="inset-y fixed  left-0 z-20 flex h-full flex-col border-r">
@@ -53,113 +54,127 @@ export function Dashboard() {
           </Button>
         </div>
         <nav className="grid gap-1 p-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-lg bg-muted"
-                aria-label="Playground"
-              >
-                <SquareTerminal className="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={5}>
-              Playground
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-lg"
-                aria-label="Models"
-              >
-                <Bot className="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={5}>
-              Models
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-lg"
-                aria-label="API"
-              >
-                <Code2 className="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={5}>
-              API
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-lg"
-                aria-label="Documentation"
-              >
-                <Book className="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={5}>
-              Documentation
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-lg"
-                aria-label="Settings"
-              >
-                <Settings2 className="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={5}>
-              Settings
-            </TooltipContent>
-          </Tooltip>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-lg bg-muted"
+                  aria-label="Playground"
+                >
+                  <SquareTerminal className="size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={5}>
+                Playground
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-lg"
+                  aria-label="Models"
+                >
+                  <Bot className="size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={5}>
+                Models
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-lg"
+                  aria-label="API"
+                >
+                  <Code2 className="size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={5}>
+                API
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-lg"
+                  aria-label="Documentation"
+                >
+                  <Book className="size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={5}>
+                Documentation
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-lg"
+                  aria-label="Settings"
+                >
+                  <Settings2 className="size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={5}>
+                Settings
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </nav>
         <nav className="mt-auto grid gap-1 p-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="mt-auto rounded-lg"
-                aria-label="Help"
-              >
-                <LifeBuoy className="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={5}>
-              Help
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="mt-auto rounded-lg"
-                aria-label="Account"
-              >
-                <SquareUser className="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={5}>
-              Account
-            </TooltipContent>
-          </Tooltip>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="mt-auto rounded-lg"
+                  aria-label="Help"
+                >
+                  <LifeBuoy className="size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={5}>
+                Help
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="mt-auto rounded-lg"
+                  aria-label="Account"
+                >
+                  <SquareUser className="size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={5}>
+                Account
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </nav>
       </aside>
       <div className="flex flex-col">
@@ -423,24 +438,28 @@ export function Dashboard() {
                 className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"
               />
               <div className="flex items-center p-3 pt-0">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Paperclip className="size-4" />
-                      <span className="sr-only">Attach file</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">Attach File</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Mic className="size-4" />
-                      <span className="sr-only">Use Microphone</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">Use Microphone</TooltipContent>
-                </Tooltip>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <Paperclip className="size-4" />
+                        <span className="sr-only">Attach file</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">Attach File</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <Mic className="size-4" />
+                        <span className="sr-only">Use Microphone</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">Use Microphone</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <Button type="submit" size="sm" className="ml-auto gap-1.5">
                   Send Message
                   <CornerDownLeft className="size-3.5" />
