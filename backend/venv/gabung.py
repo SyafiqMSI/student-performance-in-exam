@@ -4,8 +4,8 @@ from sklearn import preprocessing
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import cross_val_score
-import joblib
-
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 # Memuat file CSV
 file_path = './Expanded_data_with_more_features.csv'
@@ -304,6 +304,75 @@ def evaluate_performance(gender_val, race_ethnicity_val, parental_education_val,
     
     performance_sim.compute()
     return performance_sim.output['performance']
+# Definisikan objek Flask app
+app = Flask(__name__)
+CORS(app)  # Aktifkan CORS untuk semua rute
+
+# Mapping dictionaries
+gender_map = {'female': 1, 'male': 0}
+ethnicGroup_map = {'group A': 0, 'group B': 1, 'group C': 2, 'group D': 3, 'group E': 4}
+parentEducation_map = {
+    'some high school': 0,
+    'high school': 1,
+    'some college': 2,
+    'associate degree': 3,
+    'bachelor degree': 4,
+    'master degree': 5
+}
+lunchType_map = {'standard': 0, 'free/reduced': 1}
+testPrep_map = {'none': 0, 'completed': 1}
+parentMaritalStatus_map = {'divorced': 0, 'married': 1, 'single': 2, 'widowed': 3}
+isFirstChild_map = {'yes': 0, 'no': 1}
+nrSiblings_map = {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7}
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, POST')
+    return response
+
+@app.route('/api/submit', methods=['POST'])
+def submit_data():
+    data = request.get_json()
+    print(f"Received data: {data}")  # Debugging: Print received data
+
+    # Pastikan data yang diterima sesuai dengan format yang diharapkan
+    required_fields = ['gender', 'ethnicGroup', 'parentEducation', 'lunchType', 'testPrep', 'parentMaritalStatus', 'isFirstChild', 'nrSiblings']
+    for field in required_fields:
+        if field not in data:
+            return jsonify({'error': f'Missing {field}'}), 400
+
+    # Ubah nilai-nilai input sesuai dengan mapping
+    gender_val = gender_map.get(data['gender'], -1)  # -1 untuk penanganan kesalahan
+    race_ethnicity_val = ethnicGroup_map.get(data['ethnicGroup'], -1)
+    parental_education_val = parentEducation_map.get(data['parentEducation'], -1)
+    lunch_val = lunchType_map.get(data['lunchType'], -1)
+    test_prep_val = testPrep_map.get(data['testPrep'], -1)
+    parent_marital_status_val = parentMaritalStatus_map.get(data['parentMaritalStatus'], -1)
+    isFirst_child_val = isFirstChild_map.get(data['isFirstChild'], -1)
+    nmbr_siblings_val = nrSiblings_map.get(data['nrSiblings'], -1)
+
+    print(f"Converted values: gender={gender_val}, ethnicGroup={race_ethnicity_val}, parentEducation={parental_education_val}, lunchType={lunch_val}, testPrep={test_prep_val}, parentMaritalStatus={parent_marital_status_val}, isFirstChild={isFirst_child_val}, nrSiblings={nmbr_siblings_val}")
+
+    # Periksa apakah ada nilai -1 yang menunjukkan kesalahan dalam mapping
+    if -1 in [gender_val, race_ethnicity_val, parental_education_val, lunch_val, test_prep_val, parent_marital_status_val, isFirst_child_val, nmbr_siblings_val]:
+        return jsonify({'error': 'Invalid data input'}), 400
+ # Lakukan pemrosesan atau evaluasi performa dengan fungsi yang sesuai
+    evaluate_performance(
+        gender_val, race_ethnicity_val, parental_education_val,
+        lunch_val, test_prep_val, parent_marital_status_val,
+        isFirst_child_val, nmbr_siblings_val,
+    )
+    performance_score = evaluate_performance
+
+    print(f"Performance score: {performance_score}")  # Print performance score for debugging
+
+    # Mengembalikan hasil dalam bentuk JSON ke frontend
+    return jsonify({'performance_score': performance_score})
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 # performance_score = evaluate_performance()
 
