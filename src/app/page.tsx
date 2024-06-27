@@ -1,6 +1,5 @@
 "use client";
 
-
 import {
   Bird,
   Book,
@@ -58,7 +57,6 @@ import { Bar } from "react-chartjs-2";
 import { useState } from "react";
 import axios from "axios";
 
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -112,6 +110,7 @@ export default function Dashboard() {
     readingScore: "",
     writingScore: "",
   });
+  const [predictedPerformance, setPredictedPerformance] = useState(null);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -131,7 +130,7 @@ export default function Dashboard() {
         "http://localhost:5000/api/submit",
         formData
       );
-      console.log(response.data);
+      setPredictedPerformance(response.data.predictedPerformance);
     } catch (error) {
       console.error("Error submitting data:", error);
     }
@@ -459,6 +458,12 @@ export default function Dashboard() {
           </div>
           <div className="relative flex flex-col items-start gap-8 overflow-hidden rounded-lg border p-4">
             <Bar data={data} options={options} />
+            {predictedPerformance && (
+              <div className="mt-4 p-4 border rounded-lg">
+                <h2 className="text-lg font-semibold">Predicted Performance</h2>
+                <p>{predictedPerformance}</p>
+              </div>
+            )}
           </div>
         </main>
       </div>
