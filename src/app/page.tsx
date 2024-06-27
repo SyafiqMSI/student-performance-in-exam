@@ -1,6 +1,5 @@
 "use client";
 
-
 import {
   Bird,
   Book,
@@ -58,7 +57,6 @@ import { Bar } from "react-chartjs-2";
 import { useState } from "react";
 import axios from "axios";
 
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -67,19 +65,6 @@ ChartJS.register(
   ChartTooltip,
   Legend
 );
-
-const initialData = {
-  labels: ["Math", "Reading", "Writing"],
-  datasets: [
-    {
-      label: "Scores",
-      data: [85, 92, 78],
-      backgroundColor: "rgba(75, 192, 192, 0.2)",
-      borderColor: "rgba(75, 192, 192, 1)",
-      borderWidth: 1,
-    },
-  ],
-};
 
 const options = {
   responsive: true,
@@ -95,7 +80,7 @@ const options = {
 };
 
 export default function Dashboard() {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState();
   const [formData, setFormData] = useState({
     gender: "",
     ethnicGroup: "",
@@ -103,22 +88,11 @@ export default function Dashboard() {
     lunchType: "",
     testPrep: "",
     parentMaritalStatus: "",
-    practiceSport: "",
-    isFirstChild: "",
-    transportMeans: "",
-    nrSiblings: "",
-    wklyStudyHours: "",
-    mathScore: "",
-    readingScore: "",
-    writingScore: "",
-  });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { id, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [id]: value }));
-  };
+    isFirstChild: "",
+    nrSiblings: "",
+  });
+  const [predictedPerformance, setPredictedPerformance] = useState(null);
 
   const handleSelectChange = (id: string, value: string) => {
     setFormData((prevData) => ({ ...prevData, [id]: value }));
@@ -131,7 +105,7 @@ export default function Dashboard() {
         "http://localhost:5000/api/submit",
         formData
       );
-      console.log(response.data);
+      setPredictedPerformance(response.data.predictedPerformance);
     } catch (error) {
       console.error("Error submitting data:", error);
     }
@@ -186,7 +160,9 @@ export default function Dashboard() {
       </aside>
       <div className="flex flex-col h-full w-full overflow-hidden">
         <header className="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
-          <h1 className="text-xl font-semibold">Fuzzy Inference System</h1>
+          <h1 className="text-xl font-semibold">
+            Student Performance Dashboard
+          </h1>
           <Drawer>
             <DrawerTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -256,10 +232,11 @@ export default function Dashboard() {
                         <SelectValue placeholder="Select Ethnic Group" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="group-a">Group A</SelectItem>
-                        <SelectItem value="group-b">Group B</SelectItem>
-                        <SelectItem value="group-c">Group C</SelectItem>
-                        <SelectItem value="group-d">Group D</SelectItem>
+                        <SelectItem value="group A">Group A</SelectItem>
+                        <SelectItem value="group B">Group B</SelectItem>
+                        <SelectItem value="group C">Group C</SelectItem>
+                        <SelectItem value="group D">Group D</SelectItem>
+                        <SelectItem value="group E">Group E</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -277,17 +254,21 @@ export default function Dashboard() {
                         <SelectValue placeholder="Select Parent Education" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="bachelor's-degree">
-                          Bachelor&apos;s Degree
+                        <SelectItem value="some high school">
+                          Some High School
                         </SelectItem>
-                        <SelectItem value="master's-degree">
-                          Master&apos;s Degree
-                        </SelectItem>
-                        <SelectItem value="associate's-degree">
-                          Associate&apos;s Degree
-                        </SelectItem>
-                        <SelectItem value="some-college">
+                        <SelectItem value="high school">High School</SelectItem>
+                        <SelectItem value="some college">
                           Some College
+                        </SelectItem>
+                        <SelectItem value="associate degree">
+                          Associate Degree
+                        </SelectItem>
+                        <SelectItem value="bachelor degree">
+                          Bachelor Degree
+                        </SelectItem>
+                        <SelectItem value="master degree">
+                          Master Degree
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -306,10 +287,10 @@ export default function Dashboard() {
                         <SelectValue placeholder="Select Lunch Type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="group-a">Group A</SelectItem>
-                        <SelectItem value="group-b">Group B</SelectItem>
-                        <SelectItem value="group-c">Group C</SelectItem>
-                        <SelectItem value="group-d">Group D</SelectItem>
+                        <SelectItem value="standard">Standard</SelectItem>
+                        <SelectItem value="free/reduced">
+                          Free/Reduced
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -350,28 +331,12 @@ export default function Dashboard() {
                       <SelectContent>
                         <SelectItem value="married">Married</SelectItem>
                         <SelectItem value="single">Single</SelectItem>
+                        <SelectItem value="divorced">Divorced</SelectItem>
+                        <SelectItem value="widowed">Widowed</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="practiceSport">Practice Sport</Label>
-                    <Select
-                      onValueChange={(value) =>
-                        handleSelectChange("practiceSport", value)
-                      }
-                    >
-                      <SelectTrigger
-                        id="practiceSport"
-                        className="items-start [&_[data-description]]:hidden"
-                      >
-                        <SelectValue placeholder="Select Sport Practice" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="yes">Yes</SelectItem>
-                        <SelectItem value="no">No</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+
                   <div className="grid gap-3">
                     <Label htmlFor="isFirstChild">Is First Child</Label>
                     <Select
@@ -383,7 +348,7 @@ export default function Dashboard() {
                         id="isFirstChild"
                         className="items-start [&_[data-description]]:hidden"
                       >
-                        <SelectValue placeholder="Select Is First Child" />
+                        <SelectValue placeholder="Select Option" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="yes">Yes</SelectItem>
@@ -392,73 +357,65 @@ export default function Dashboard() {
                     </Select>
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="transportMeans">Transport Means</Label>
+                    <Label htmlFor="nrSiblings">Number of Siblings</Label>
                     <Select
                       onValueChange={(value) =>
-                        handleSelectChange("transportMeans", value)
+                        handleSelectChange("nrSiblings", value)
                       }
                     >
                       <SelectTrigger
-                        id="transportMeans"
+                        id="nrSiblings"
                         className="items-start [&_[data-description]]:hidden"
                       >
-                        <SelectValue placeholder="Select Transport Means" />
+                        <SelectValue placeholder="Select Number" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="car">Car</SelectItem>
-                        <SelectItem value="bike">Bike</SelectItem>
-                        <SelectItem value="bus">Bus</SelectItem>
-                        <SelectItem value="walk">Walk</SelectItem>
+                        <SelectItem value="0">0</SelectItem>
+                        <SelectItem value="1">1</SelectItem>
+                        <SelectItem value="2">2</SelectItem>
+                        <SelectItem value="3">3</SelectItem>
+                        <SelectItem value="4">4</SelectItem>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="more than 5">More than 5</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="nrSiblings">Number of Siblings</Label>
-                    <Input
-                      type="number"
-                      id="nrSiblings"
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="wklyStudyHours">Weekly Study Hours</Label>
-                    <Input
-                      type="number"
-                      id="wklyStudyHours"
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="mathScore">Math Score</Label>
-                    <Input
-                      type="number"
-                      id="mathScore"
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="readingScore">Reading Score</Label>
-                    <Input
-                      type="number"
-                      id="readingScore"
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="writingScore">Writing Score</Label>
-                    <Input
-                      type="number"
-                      id="writingScore"
-                      onChange={handleInputChange}
-                    />
-                  </div>
                 </div>
               </fieldset>
-              <Button type="submit">Submit</Button>
+              <Button className="w-full" type="submit">
+                Submit
+              </Button>
             </form>
+            {predictedPerformance !== null && (
+              <div className="w-full">
+                <h2 className="text-2xl font-semibold">
+                  Predicted Performance
+                </h2>
+                <div className="mt-4">
+                  <p>Gender: {formData.gender}</p>
+                  <p>Ethnic Group: {formData.ethnicGroup}</p>
+                  <p>Parent Education: {formData.parentEducation}</p>
+                  <p>Lunch Type: {formData.lunchType}</p>
+                  <p>Test Preparation: {formData.testPrep}</p>
+                  <p>Parent Marital Status: {formData.parentMaritalStatus}</p>
+
+                  <p>Is First Child: {formData.isFirstChild}</p>
+                  <p>Number of Siblings: {formData.nrSiblings}</p>
+
+                  <p>Predicted Score: {predictedPerformance}</p>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="relative flex flex-col items-start gap-8 overflow-hidden rounded-lg border p-4">
-            <Bar data={data} options={options} />
+          <div className="flex flex-col gap-4 overflow-hidden">
+            <div className="relative flex-1 overflow-hidden">
+              <div className="absolute inset-0 overflow-auto">
+                <div className="p-6">
+                  <h2 className="text-2xl font-semibold">Performance Chart</h2>
+                  {/* Add your chart component here */}
+                </div>
+              </div>
+            </div>
           </div>
         </main>
       </div>
