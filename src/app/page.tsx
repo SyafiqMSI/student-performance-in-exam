@@ -1,5 +1,6 @@
 "use client";
 
+
 import {
   Bird,
   Book,
@@ -55,6 +56,8 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { useState } from "react";
+import axios from "axios";
+
 
 ChartJS.register(
   CategoryScale,
@@ -70,7 +73,7 @@ const initialData = {
   datasets: [
     {
       label: "Scores",
-      data: [85, 92, 78], // Contoh data
+      data: [85, 92, 78],
       backgroundColor: "rgba(75, 192, 192, 0.2)",
       borderColor: "rgba(75, 192, 192, 1)",
       borderWidth: 1,
@@ -82,7 +85,7 @@ const options = {
   responsive: true,
   plugins: {
     legend: {
-      position: "top" as const, // Use 'top' instead of a generic string
+      position: "top" as const,
     },
     title: {
       display: true,
@@ -117,25 +120,21 @@ export default function Dashboard() {
     setFormData((prevData) => ({ ...prevData, [id]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Fungsi fuzzy  di sini:
-    const fuzzyResults = calculateFuzzyResults(formData);
-    // Memperbarui data grafik dengan hasil fuzzy
-    setData((prevData) => ({
-      ...prevData,
-      datasets: [
-        {
-          ...prevData.datasets[0],
-          data: fuzzyResults,
-        },
-      ],
-    }));
+  const handleSelectChange = (id: string, value: string) => {
+    setFormData((prevData) => ({ ...prevData, [id]: value }));
   };
 
-  const calculateFuzzyResults = (data: typeof formData) => {
-    // Implementasi fungsi fuzzy Anda di sini dan kembalikan hasilnya
-    return [70, 80, 90]; // Contoh hasil fuzzy
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/submit",
+        formData
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error submitting data:", error);
+    }
   };
 
   return (
@@ -143,7 +142,7 @@ export default function Dashboard() {
       <aside className="inset-y fixed left-0 z-20 flex h-full flex-col border-r">
         <div className="border-b p-2">
           <Button variant="outline" size="icon" aria-label="Home">
-            <Triangle className="size-5 fill-foreground" />{" "}
+            <Triangle className="size-5 fill-foreground" />
           </Button>
         </div>
         <nav className="grid gap-1 p-2">
@@ -214,10 +213,7 @@ export default function Dashboard() {
           </Button>
         </header>
         <main className="grid flex-1 gap-4 overflow-hidden p-4 md:grid-cols-[3fr_4fr] lg:grid-cols-[3fr_4fr]">
-          <div
-            className="relative flex flex-col items-start gap-8 overflow-auto"
-            x-chunk="dashboard-03-chunk-0"
-          >
+          <div className="relative flex flex-col items-start gap-8 overflow-auto">
             <form
               className="grid w-full items-start gap-6"
               onSubmit={handleSubmit}
@@ -229,7 +225,11 @@ export default function Dashboard() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-3">
                     <Label htmlFor="gender">Gender</Label>
-                    <Select>
+                    <Select
+                      onValueChange={(value) =>
+                        handleSelectChange("gender", value)
+                      }
+                    >
                       <SelectTrigger
                         id="gender"
                         className="items-start [&_[data-description]]:hidden"
@@ -243,10 +243,14 @@ export default function Dashboard() {
                     </Select>
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="group-group">Ethnic Group</Label>
-                    <Select>
+                    <Label htmlFor="ethnicGroup">Ethnic Group</Label>
+                    <Select
+                      onValueChange={(value) =>
+                        handleSelectChange("ethnicGroup", value)
+                      }
+                    >
                       <SelectTrigger
-                        id="ethnic"
+                        id="ethnicGroup"
                         className="items-start [&_[data-description]]:hidden"
                       >
                         <SelectValue placeholder="Select Ethnic Group" />
@@ -260,10 +264,14 @@ export default function Dashboard() {
                     </Select>
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="parent-educ">Parent Education</Label>
-                    <Select>
+                    <Label htmlFor="parentEducation">Parent Education</Label>
+                    <Select
+                      onValueChange={(value) =>
+                        handleSelectChange("parentEducation", value)
+                      }
+                    >
                       <SelectTrigger
-                        id="parent-educ"
+                        id="parentEducation"
                         className="items-start [&_[data-description]]:hidden"
                       >
                         <SelectValue placeholder="Select Parent Education" />
@@ -285,10 +293,14 @@ export default function Dashboard() {
                     </Select>
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="lunch-type">Lunch Type</Label>
-                    <Select>
+                    <Label htmlFor="lunchType">Lunch Type</Label>
+                    <Select
+                      onValueChange={(value) =>
+                        handleSelectChange("lunchType", value)
+                      }
+                    >
                       <SelectTrigger
-                        id="lunch-type"
+                        id="lunchType"
                         className="items-start [&_[data-description]]:hidden"
                       >
                         <SelectValue placeholder="Select Lunch Type" />
@@ -302,66 +314,57 @@ export default function Dashboard() {
                     </Select>
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="test-prep">Test Preparation</Label>
-                    <Select>
+                    <Label htmlFor="testPrep">Test Preparation</Label>
+                    <Select
+                      onValueChange={(value) =>
+                        handleSelectChange("testPrep", value)
+                      }
+                    >
                       <SelectTrigger
-                        id="parent-educ-select"
+                        id="testPrep"
                         className="items-start [&_[data-description]]:hidden"
                       >
                         <SelectValue placeholder="Select Test Preparation" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="group-a">Group A</SelectItem>
-                        <SelectItem value="group-b">Group B</SelectItem>
-                        <SelectItem value="group-c">Group C</SelectItem>
-                        <SelectItem value="group-d">Group D</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="parent-marital-status">
+                    <Label htmlFor="parentMaritalStatus">
                       Parent Marital Status
                     </Label>
-                    <Select>
+                    <Select
+                      onValueChange={(value) =>
+                        handleSelectChange("parentMaritalStatus", value)
+                      }
+                    >
                       <SelectTrigger
-                        id="parent-educ-select"
+                        id="parentMaritalStatus"
                         className="items-start [&_[data-description]]:hidden"
                       >
-                        <SelectValue placeholder="Select Parent Marital Status" />
+                        <SelectValue placeholder="Select Marital Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="group-a">Group A</SelectItem>
-                        <SelectItem value="group-b">Group B</SelectItem>
-                        <SelectItem value="group-c">Group C</SelectItem>
-                        <SelectItem value="group-d">Group D</SelectItem>
+                        <SelectItem value="married">Married</SelectItem>
+                        <SelectItem value="single">Single</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="practice-sport">Practice Sport</Label>
-                    <Select>
+                    <Label htmlFor="practiceSport">Practice Sport</Label>
+                    <Select
+                      onValueChange={(value) =>
+                        handleSelectChange("practiceSport", value)
+                      }
+                    >
                       <SelectTrigger
-                        id="parent-educ-select"
+                        id="practiceSport"
                         className="items-start [&_[data-description]]:hidden"
                       >
-                        <SelectValue placeholder="Select Practice Sport" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="group-a">Group A</SelectItem>
-                        <SelectItem value="group-b">Group B</SelectItem>
-                        <SelectItem value="group-c">Group C</SelectItem>
-                        <SelectItem value="group-d">Group D</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="is-first-child">Is First Child</Label>
-                    <Select>
-                      <SelectTrigger
-                        id="is-first-child"
-                        className="items-start [&_[data-description]]:hidden"
-                      >
-                        <SelectValue placeholder="Select Yes or No" />
+                        <SelectValue placeholder="Select Sport Practice" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="yes">Yes</SelectItem>
@@ -370,87 +373,92 @@ export default function Dashboard() {
                     </Select>
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="transport-means">Transport Means</Label>
-                    <Select>
+                    <Label htmlFor="isFirstChild">Is First Child</Label>
+                    <Select
+                      onValueChange={(value) =>
+                        handleSelectChange("isFirstChild", value)
+                      }
+                    >
                       <SelectTrigger
-                        id="parent-educ-select"
+                        id="isFirstChild"
+                        className="items-start [&_[data-description]]:hidden"
+                      >
+                        <SelectValue placeholder="Select Is First Child" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-3">
+                    <Label htmlFor="transportMeans">Transport Means</Label>
+                    <Select
+                      onValueChange={(value) =>
+                        handleSelectChange("transportMeans", value)
+                      }
+                    >
+                      <SelectTrigger
+                        id="transportMeans"
                         className="items-start [&_[data-description]]:hidden"
                       >
                         <SelectValue placeholder="Select Transport Means" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="group-a">Group A</SelectItem>
-                        <SelectItem value="group-b">Group B</SelectItem>
-                        <SelectItem value="group-c">Group C</SelectItem>
-                        <SelectItem value="group-d">Group D</SelectItem>
+                        <SelectItem value="car">Car</SelectItem>
+                        <SelectItem value="bike">Bike</SelectItem>
+                        <SelectItem value="bus">Bus</SelectItem>
+                        <SelectItem value="walk">Walk</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="nr-siblings">Number of Siblings</Label>
+                    <Label htmlFor="nrSiblings">Number of Siblings</Label>
                     <Input
-                      id="nr-siblings"
                       type="number"
-                      placeholder="Enter Number of Siblings"
+                      id="nrSiblings"
+                      onChange={handleInputChange}
                     />
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="wkly-study-hours">Weekly Study Hours</Label>
+                    <Label htmlFor="wklyStudyHours">Weekly Study Hours</Label>
                     <Input
-                      id="wkly-study-hours"
-                      type="text"
-                      placeholder="Enter Weekly Study Hours"
+                      type="number"
+                      id="wklyStudyHours"
+                      onChange={handleInputChange}
                     />
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="math-score">Math Score</Label>
+                    <Label htmlFor="mathScore">Math Score</Label>
                     <Input
-                      id="math-score"
                       type="number"
-                      placeholder="Enter Math Score"
+                      id="mathScore"
+                      onChange={handleInputChange}
                     />
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="reading-score">Reading Score</Label>
+                    <Label htmlFor="readingScore">Reading Score</Label>
                     <Input
-                      id="reading-score"
                       type="number"
-                      placeholder="Enter Reading Score"
+                      id="readingScore"
+                      onChange={handleInputChange}
                     />
                   </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="writing-score">Writing Score</Label>
+                    <Label htmlFor="writingScore">Writing Score</Label>
                     <Input
-                      id="writing-score"
                       type="number"
-                      placeholder="Enter Writing Score"
+                      id="writingScore"
+                      onChange={handleInputChange}
                     />
                   </div>
                 </div>
               </fieldset>
-
-              <Button type="submit" className="self-end">
-                Submit
-              </Button>
+              <Button type="submit">Submit</Button>
             </form>
           </div>
-          <div
-            className="relative flex flex-col gap-8 overflow-auto"
-            x-chunk="dashboard-03-chunk-1"
-          >
-            <div className="flex w-full flex-col gap-2">
-              <div className="rounded-lg border p-4">
-                <div className="flex justify-between pb-2">
-                  <h3 className="font-semibold leading-none tracking-tight">
-                    Scores Chart
-                  </h3>
-                  <Button variant="ghost" size="icon">
-                    <Settings className="size-4" />
-                  </Button>
-                </div>
-                <Bar data={data} options={options} />
-              </div>
-            </div>
+          <div className="relative flex flex-col items-start gap-8 overflow-hidden rounded-lg border p-4">
+            <Bar data={data} options={options} />
           </div>
         </main>
       </div>
